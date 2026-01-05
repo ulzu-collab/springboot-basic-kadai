@@ -20,27 +20,27 @@ public class ContactFormController {
     public String showForm(@ModelAttribute("contactForm") ContactForm form) {
         return "contactFormView";
     }
-
+    
     // 確認画面へ
-    @PostMapping("/form")
+    @PostMapping("/form/confirm")
     public String confirm(
-            @Valid ContactForm form,
-            BindingResult bindingResult,
-            RedirectAttributes redirectAttributes,
-            Model model) {
-
-        // バリデーションエラーがあれば入力画面に戻す
-        if (bindingResult.hasErrors()) {
-        	// 入力値とエラー情報をフラッシュ属性に保存
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.contactForm", bindingResult);
-            redirectAttributes.addFlashAttribute("contactForm", form);
-            return "contactFormView";
-
-        }
-
-        // 入力内容を確認画面へ渡す
-        model.addAttribute("contactForm", form);
-        return "confirmView";
+    		@Valid ContactForm form,
+    		BindingResult bindingResult,
+    		RedirectAttributes redirectAttributes,
+    		Model model) {
+    	
+    	// バリデーションエラーがあれば入力画面に戻す
+    	if (bindingResult.hasErrors()) {
+    		// 入力値とエラー情報をフラッシュ属性に保存
+    		redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.contactForm", bindingResult);
+    		redirectAttributes.addFlashAttribute("contactForm", form);
+    		return "contactFormView";
+    		
+    	}
+    	
+    	// 入力内容を確認画面へ渡す
+    	model.addAttribute("contactForm", form);
+    	return "confirmView";
     }
 
 }
