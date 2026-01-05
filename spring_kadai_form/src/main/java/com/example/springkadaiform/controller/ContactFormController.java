@@ -22,7 +22,7 @@ public class ContactFormController {
     }
 
     // 確認画面へ
-    @PostMapping("/form/confirm")
+    @PostMapping("/form")
     public String confirm(
             @Valid ContactForm form,
             BindingResult bindingResult,
