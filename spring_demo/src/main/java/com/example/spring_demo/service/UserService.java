@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.spring_demo.entity.UserEntity;
+import com.example.spring_demo.form.SignupForm;
 import com.example.spring_demo.repository.UserRepository;
 
 @Service
@@ -22,6 +23,8 @@ public class UserService {
 		UserEntity userEntity = new UserEntity();
 		
 		userEntity.setEmail("admin@example.com");
+		
+		return userRepository.save(userEntity);
 	}
 
 }
