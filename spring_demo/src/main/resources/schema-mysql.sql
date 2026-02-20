@@ -1,0 +1,53 @@
+CREATE TABLE IF NOT EXISTS users
+(
+   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+   email VARCHAR (255) NOT NULL UNIQUE,
+   password VARCHAR (255) NOT NULL,
+   role VARCHAR (50) NOT NULL,
+   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS profile
+(
+   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+   user_id BIGINT NOT NULL UNIQUE,
+   nickname VARCHAR (100),
+   bio TEXT,
+   birthday DATE,
+   icon_path VARCHAR (255),
+   FOREIGN KEY (user_id) REFERENCES users (id)
+);
+CREATE TABLE IF NOT EXISTS post
+(
+   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+   user_id BIGINT NOT NULL,
+   title VARCHAR (255) NOT NULL,
+   content TEXT,
+   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   FOREIGN KEY (user_id) REFERENCES users (id)
+);
+CREATE TABLE IF NOT EXISTS tag
+(
+   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+   name VARCHAR (100) NOT NULL UNIQUE
+);
+CREATE TABLE IF NOT EXISTS post_tag
+(
+   post_id BIGINT NOT NULL,
+   tag_id BIGINT NOT NULL,
+   PRIMARY KEY
+   (
+      post_id,
+      tag_id
+   ),
+   FOREIGN KEY (post_id) REFERENCES post (id),
+   FOREIGN KEY (tag_id) REFERENCES tag (id)
+);
+CREATE TABLE IF NOT EXISTS login_log
+(
+   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+   user_id BIGINT NOT NULL,
+   login_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   ip_address VARCHAR (50),
+   user_agent VARCHAR (255),
+   FOREIGN KEY (user_id) REFERENCES users (id)
+);
