@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>ユーザー検索</title>
+</head>
+
+<body>
+
+	<h2>ユーザー検索</h2>
+
+	<!-- ▼ 検索フォーム ▼ -->
+	<form th:action="@{/user/search}" method="post">
+		<label for="userId">ユーザーID：</label>
+		<input type="text" id="userId" name="userId" th:value="${userId}">
+		<button type="submit">検索</button>
+	</form>
+
+	<hr>
+
+	<!-- ▼ 検索結果表示 ▼ -->
+	<div th:if="${user != null}">
+		<h3>検索結果</h3>
+		<p>ユーザーID：<span th:text="${user.id}"></span></p>
+		<p>名前：<span th:text="${user.name}"></span></p>
+		<p>メール：<span th:text="${user.email}"></span></p>
+	</div>
+
+	<!-- ▼ ユーザーが見つからなかった場合 ▼ -->
+	<div th:if="${user == null}">
+		<p>該当するユーザーが見つかりませんでした。</p>
+	</div>
+
+</body>
+
+</html>
