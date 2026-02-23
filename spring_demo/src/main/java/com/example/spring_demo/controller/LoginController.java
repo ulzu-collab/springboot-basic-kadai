@@ -2,6 +2,7 @@ package com.example.spring_demo.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -14,6 +15,11 @@ public class LoginController {
 
 	public LoginController(UserService userService) {
 		this.userService = userService;
+	}
+
+	@GetMapping("/login")
+	public String showLoginForm() {
+		return "login";
 	}
 
 	@PostMapping("/login")

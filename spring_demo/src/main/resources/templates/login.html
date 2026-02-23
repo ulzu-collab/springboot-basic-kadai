@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>ログイン</title>
+</head>
+
+<body>
+
+	<h2>ログイン</h2>
+
+	<!-- 認証失敗メッセージ（LoginController から渡される） -->
+	<div th:if="${message}" style="color:red;">
+		<p th:text="${message}"></p>
+	</div>
+
+	<form action="/login" method="post">
+
+		<!-- Email -->
+		<div>
+			<label for="email">メールアドレス：</label>
+			<input type="text" id="email" name="email" th:value="${email}">
+			<!-- 未入力バリデーション -->
+<!--			<div th:if="${#fields.hasErrors('email')}" style="color:red;">-->
+<!--				<p th:errors="*{email}"></p>-->
+<!--			</div>-->
+		</div>
+
+		<!-- Password -->
+		<div>
+			<label for="password">パスワード：</label>
+			<input type="password" id="password" name="password">
+			<!-- 未入力バリデーション -->
+<!--			<div th:if="${#fields.hasErrors('password')}" style="color:red;">-->
+<!--				<p th:errors="*{password}"></p>-->
+<!--			</div>-->
+		</div>
+
+		<button type="submit">ログイン</button>
+	</form>
+
+</body>
+
+</html>
