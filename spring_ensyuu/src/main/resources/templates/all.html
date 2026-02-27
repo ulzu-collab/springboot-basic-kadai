@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ユーザー一覧（テスト）</title>
+</head>
+<body>
+    <h1>ユーザー一覧（テスト表示）</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ユーザーID</th>
+                <th>ユーザー名</th>
+                <th>パスワード（生）</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- users は Controller から渡された List<UserEntity> を想定 -->
+            <tr th:each="user : ${users}">
+                <td th:text="${user.userId}">1</td>
+                <td th:text="${user.userName}">sample_user</td>
+                <td th:text="${user.password}">password</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
