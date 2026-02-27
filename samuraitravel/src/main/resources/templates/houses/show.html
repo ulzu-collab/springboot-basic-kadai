@@ -30,6 +30,10 @@
 
 						<h1 class="mb-4 text-center" th:text="${house.name}"></h1>
 
+						<div th:if="${errorMessage}" class="alert alert-danger">
+							<span th:text="${errorMessage}"></span>
+						</div>
+
 						<div class="mb-4">
 							<img th:if="${house.imageName}" th:src="@{/storage/__${house.imageName}__}" class="w-100"
 								alt="民宿画像">
@@ -141,7 +145,8 @@
 													<input type="text" class="form-control"
 														id="fromCheckinDateToCheckoutDate" th:value="${previousDates}"
 														readonly>
-													<input type="hidden" th:field="*{checkinDate}">	<!--チェックイン日とチェックアウト日のフォーム部品を設置。-->
+													<input type="hidden" th:field="*{checkinDate}">
+													<!--チェックイン日とチェックアウト日のフォーム部品を設置。-->
 													<input type="hidden" th:field="*{checkoutDate}">
 												</div>
 
