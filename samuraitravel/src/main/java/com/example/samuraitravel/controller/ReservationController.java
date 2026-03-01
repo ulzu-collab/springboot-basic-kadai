@@ -129,4 +129,25 @@ public class ReservationController {
 
 		return "reservations/confirm";
 	}
+
+	@PostMapping("/reservations/create")
+	public String create(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+			RedirectAttributes redirectAttributes, HttpSession httpSession) {
+		// セッションからDTOを取得する
+		ReservationDTO reservationDTO = (ReservationDTO) httpSession.getAttribute("reservationDTO");
+
+		if (reservationDTO == null) {
+			redirectAttributes.addFlashAttribute("errorMessage", "セッションがタイムアウトしました。もう一度予約内容を入力してください。");
+
+			return "redirect:/houses";
+		}
+
+		User user = userDetailsImpl.getUser();
+		reservationService.createReservation(reservationDTO, user);
+
+		// セッションからDTOを削除する
+		httpSession.removeAttribute("reservationDTO");
+
+		return "redirect:/reservations?reserved";
+	}
 }

@@ -3,22 +3,31 @@ package com.example.samuraitravel.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
+import com.example.samuraitravel.dto.ReservationDTO;
+import com.example.samuraitravel.entity.House;
 import com.example.samuraitravel.entity.Reservation;
 import com.example.samuraitravel.entity.User;
+import com.example.samuraitravel.repository.HouseRepository;
 import com.example.samuraitravel.repository.ReservationRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ReservationService {
 	private final ReservationRepository reservationRepository;
+	private final HouseRepository houseRepository;
 
-	public ReservationService(ReservationRepository reservationRepository) {
+	public ReservationService(ReservationRepository reservationRepository, HouseRepository houseRepository) {
 		this.reservationRepository = reservationRepository;
+		this.houseRepository = houseRepository;
 	}
 
 	// 指定されたユーザーに紐づく予約を作成日時が新しい順に並べ替え、ページングされた状態で取得する
@@ -56,5 +65,32 @@ public class ReservationService {
 		int amount = price * (int) numberOfNights;
 
 		return amount;
+	}
+
+	// 予約のレコード数を取得する
+	public long countReservations() {
+		return reservationRepository.count();
+	}
+
+	// idが最も大きい予約を取得する
+	public Reservation findFirstReservationByOrderByIdDesc() {
+		return reservationRepository.findFirstByOrderByIdDesc();
+	}
+
+	@Transactional
+	public void createReservation(ReservationDTO reservationDTO, User user) {
+		Reservation reservation = new Reservation();
+
+		Optional<House> optionalHouse = houseRepository.findById(reservationDTO.getHouseId());
+		House house = optionalHouse.orElseThrow(() -> new EntityNotFoundException("指定されたIDの民宿が存在しません。"));
+
+		reservation.setHouse(house);
+		reservation.setUser(user);
+		reservation.setCheckinDate(reservationDTO.getCheckinDate());
+		reservation.setCheckoutDate(reservationDTO.getCheckoutDate());
+		reservation.setNumberOfPeople(reservationDTO.getNumberOfPeople());
+		reservation.setAmount(reservationDTO.getAmount());
+
+		reservationRepository.save(reservation);
 	}
 }
