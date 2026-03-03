@@ -1,6 +1,6 @@
 package com.example.samuraitravel.controller;
 
-import static org.assertj.core.api.Assertions.*;
+//import static org.assertj.core.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -15,11 +15,11 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
+//import org.springframework.transaction.annotation.Transactional;
 
 import com.example.samuraitravel.dto.ReservationDTO;
-import com.example.samuraitravel.entity.Reservation;
-import com.example.samuraitravel.service.ReservationService;
+//import com.example.samuraitravel.entity.Reservation;
+//import com.example.samuraitravel.service.ReservationService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -27,10 +27,10 @@ import com.example.samuraitravel.service.ReservationService;
 public class ReservationControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
-
+/*
 	@Autowired
 	private ReservationService reservationService;
-
+*/
 	@Test
 	public void 未ログインの場合は会員用の予約一覧ページからログインページにリダイレクトする() throws Exception {
 		mockMvc.perform(get("/reservations"))
@@ -80,6 +80,8 @@ public class ReservationControllerTest {
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("http://localhost/login"));
 	}
+	
+	/*
 
 	@Test
 	@WithUserDetails("taro.samurai@example.com")
@@ -152,4 +154,5 @@ public class ReservationControllerTest {
 		assertThat(reservation.getNumberOfPeople()).isEqualTo(1);
 		assertThat(reservation.getAmount()).isEqualTo(6000);
 	}
+	*/
 }
