@@ -1,6 +1,7 @@
 package com.example.samuraitravel.service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -18,10 +19,13 @@ import com.stripe.exception.InvalidRequestException;
 import com.stripe.exception.PermissionException;
 import com.stripe.exception.RateLimitException;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Event;
+import com.stripe.model.StripeObject;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.stripe.param.checkout.SessionCreateParams.Mode;
 import com.stripe.param.checkout.SessionCreateParams.PaymentMethodType;
+import com.stripe.param.checkout.SessionRetrieveParams;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
@@ -49,9 +53,11 @@ public class StripeService {
 	private String stripeCancelUrl;
 
 	private final HouseRepository houseRepository;
+	private final ReservationService reservationService;
 
-	public StripeService(HouseRepository houseRepository) {
+	public StripeService(HouseRepository houseRepository, ReservationService reservationService) {
 		this.houseRepository = houseRepository;
+		this.reservationService = reservationService;
 	}
 
 	// 依存性の注入後に一度だけ実行するメソッド
@@ -138,5 +144,58 @@ public class StripeService {
 			System.out.println("Stripeとの通信中に予期せぬエラーが発生しました。");
 			return "";
 		}
+	}
+
+	// セッションから予約情報を取得し、ReservationServiceクラスを介してデータベースに登録する
+	public void processSessionCompleted(Event event) {
+		// EventオブジェクトからStripeObjectオブジェクトを取得する
+		Optional<StripeObject> optionalStripeObject = event.getDataObjectDeserializer().getObject();
+
+		optionalStripeObject.ifPresentOrElse(stripeObject -> {
+			// StripeObjectオブジェクトをSessionオブジェクトに型変換する
+			Session session = (Session) stripeObject;
+
+			// "payment_intent"情報を展開する（詳細情報を含める）ように指定したSessionRetrieveParamsオブジェクトを生成する
+			SessionRetrieveParams sessionRetrieveParams = SessionRetrieveParams.builder().addExpand("payment_intent")
+					.build();
+
+			try {
+				// 支払い情報を含む詳細なセッション情報を取得する
+				session = Session.retrieve(session.getId(), sessionRetrieveParams, null);
+
+				// 詳細なセッション情報からメタデータ（予約情報）を取り出す
+				Map<String, String> sessionMetadata = session.getPaymentIntentObject().getMetadata();
+
+				// 予約情報をデータベースに登録する
+				reservationService.createReservation(sessionMetadata);
+
+				System.out.println("予約情報の登録処理が成功しました。");
+
+			} catch (RateLimitException e) {
+				System.out.println("短時間のうちに過剰な回数のAPIコールが行われました。");
+			} catch (InvalidRequestException e) {
+				System.out.println("APIコールのパラメーターが誤っているか、状態が誤っているか、方法が無効でした。");
+			} catch (PermissionException e) {
+				System.out.println("このリクエストに使用されたAPIキーには必要な権限がありません。");
+			} catch (AuthenticationException e) {
+				System.out.println("Stripeは、提供された情報では認証できません。");
+			} catch (ApiConnectionException e) {
+				System.out.println("お客様のサーバーとStripeの間でネットワークの問題が発生しました。");
+			} catch (ApiException e) {
+				System.out.println("Stripe側で問題が発生しました（稀な状況です）。");
+			} catch (StripeException e) {
+				System.out.println("Stripeとの通信中に予期せぬエラーが発生しました。");
+			} catch (Exception e) {
+				System.out.println("予約情報の登録処理中に予期せぬエラーが発生しました。");
+			}
+		},
+				() -> {
+					System.out.println("予約情報の登録処理が失敗しました。");
+				});
+
+		// StripeのAPIとstripe-javaライブラリのバージョンをコンソールに出力する
+		System.out.println("Stripe API Version: " + event.getApiVersion());
+		System.out
+				.println("stripe-java Version: " + Stripe.VERSION + ", stripe-java API Version: " + Stripe.API_VERSION);
 	}
 }
