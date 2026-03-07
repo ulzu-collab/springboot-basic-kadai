@@ -1,14 +1,17 @@
 package com.example.springensyuu;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.springensyuu.entity.User;
 import com.example.springensyuu.service.HelloService;
 
 @Controller
 public class ScreenController {
+	
 	private final HelloService helloService;
 	
 	public ScreenController(HelloService helloService) {
@@ -31,9 +34,27 @@ public class ScreenController {
 	 * usersテーブルの内容を一覧表示するメソッドの作成途中。
 	 * @return
 	 */
+//	@GetMapping("/screen/all")
+//	public String screenAll(Model model) {
+//		List<User> userList = helloService.getAllUser();
+//		model.addAttribute("users", userList);
+//		return "all";
+//	}
+	
 	@GetMapping("/screen/all")
-	public String screenAll() {
-		
-		return "all";
+	public String screenAll(
+	        @RequestParam(name = "page", defaultValue = "0") int page,
+	        Model model) {
+
+	    int pageSize = 2; // 1ページ2件
+
+	    // ★ helloService にページング対応のメソッドがある前提
+	    Page<User> userPage = helloService.getAllUser(page, pageSize);
+
+	    model.addAttribute("users", userPage.getContent());     // 今のページの2件
+	    model.addAttribute("currentPage", page);                // 現在ページ
+	    model.addAttribute("totalPages", userPage.getTotalPages()); // 総ページ数
+
+	    return "all"; // all.html にページング情報を渡す
 	}
 }

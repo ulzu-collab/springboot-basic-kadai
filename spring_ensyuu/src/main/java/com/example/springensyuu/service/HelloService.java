@@ -1,8 +1,8 @@
 package com.example.springensyuu.service;
 
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.example.springensyuu.entity.User;
@@ -32,7 +32,11 @@ public class HelloService {
 	 * usersテーブルの中身を一覧表示する。
 	 * @return
 	 */
-	public List<User> getAllUser() {
-		return userRepository.findAll();
+//	public Page<User> getAllUser() {
+//		return userRepository.findAll();
+//	}
+	
+	public Page<User> getAllUser(int page, int size) {
+	    return userRepository.findAll(PageRequest.of(page, size));
 	}
 }
