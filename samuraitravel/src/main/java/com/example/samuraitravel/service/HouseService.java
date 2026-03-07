@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,11 +88,16 @@ public class HouseService {
 	public Page<House> findHousesByPriceLessThanEqualOrderByPriceAsc(Integer price, Pageable pageable) {
 		return houseRepository.findByPriceLessThanEqualOrderByPriceAsc(price, pageable);
 	}
-	
-	// 作成日時が新しい順に10件の民宿を取得する
-    public List<House> findTop10HousesByOrderByCreatedAtDesc() {
-        return houseRepository.findTop10ByOrderByCreatedAtDesc();
-    } 
+
+	// 作成日時が新しい順に8件の民宿を取得する
+	public List<House> findTop8HousesByOrderByCreatedAtDesc() {
+		return houseRepository.findTop8ByOrderByCreatedAtDesc();
+	}
+
+	// 予約数が多い順に3件の民宿を取得する
+	public List<House> findTop3HousesByOrderByReservationCountDesc() {
+		return houseRepository.findAllByOrderByReservationCountDesc(PageRequest.of(0, 3));
+	}
 
 	// すべての民宿を作成日時が新しい順に並べ替え、ページングされた状態で取得する
 	public Page<House> findAllHousesByOrderByCreatedAtDesc(Pageable pageable) {
