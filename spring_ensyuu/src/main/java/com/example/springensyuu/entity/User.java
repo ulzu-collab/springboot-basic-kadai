@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -20,6 +21,7 @@ public class User {
 	private String userName;
 	
 	@Column( name = "password" )
+	@Size(min = 3, message = "パスワードは3文字以上で入力してください")
 	private String password;
 
 }
