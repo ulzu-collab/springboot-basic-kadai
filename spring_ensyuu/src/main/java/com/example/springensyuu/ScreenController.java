@@ -3,11 +3,15 @@ package com.example.springensyuu;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.springensyuu.entity.User;
 import com.example.springensyuu.service.HelloService;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class ScreenController {
@@ -56,5 +60,31 @@ public class ScreenController {
 	    model.addAttribute("totalPages", userPage.getTotalPages()); // 総ページ数
 
 	    return "all"; // all.html にページング情報を渡す
+	}
+	
+	@GetMapping("/screen/user/add")
+	public String showAddUser(Model model) {
+//		model.addAttribute("userForm", new UserForm());
+		model.addAttribute("user", new User());
+		return "addUser";
+	}
+	
+	@PostMapping("/screen/user/add")
+//	public String addUser(@Valid UserForm userForm,BindingResult result, Model model) {
+		public String addUser(@Valid User user,BindingResult result, Model model) {
+		
+		
+		// バリデーションエラーがある場合
+	    if (result.hasErrors()) {
+	        return "addUser";  // 入力画面に戻す
+	    }
+
+	    // エラーがない場合のみ登録
+//	    helloService.addUser(userForm);
+	    helloService.addUser(user);
+	    return "addUser";
+
+		
+		
 	}
 }
