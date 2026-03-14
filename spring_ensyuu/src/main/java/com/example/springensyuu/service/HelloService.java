@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.example.springensyuu.UserForm;
 import com.example.springensyuu.entity.User;
 import com.example.springensyuu.repository.UserRepository;
 
@@ -38,5 +39,13 @@ public class HelloService {
 	
 	public Page<User> getAllUser(int page, int size) {
 	    return userRepository.findAll(PageRequest.of(page, size));
+	}
+	
+	public void addUser(UserForm userForm) {
+		User user = new User();
+		user.setUserId(userForm.getUserId());
+		user.setUserName(userForm.getUserName());
+		user.setPassword(userForm.getPassword());
+		userRepository.save(user);
 	}
 }

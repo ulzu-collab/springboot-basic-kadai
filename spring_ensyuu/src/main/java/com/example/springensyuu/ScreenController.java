@@ -63,14 +63,28 @@ public class ScreenController {
 	}
 	
 	@GetMapping("/screen/user/add")
-	public String showAddUser(User user) {
-		
+	public String showAddUser(Model model) {
+//		model.addAttribute("userForm", new UserForm());
+		model.addAttribute("user", new User());
 		return "addUser";
 	}
 	
 	@PostMapping("/screen/user/add")
-	public String addUser(@Valid User user,BindingResult result, Model model) {
-		helloService.addUser(user);
-		return "addUser";
+//	public String addUser(@Valid UserForm userForm,BindingResult result, Model model) {
+		public String addUser(@Valid User user,BindingResult result, Model model) {
+		
+		
+		// バリデーションエラーがある場合
+	    if (result.hasErrors()) {
+	        return "addUser";  // 入力画面に戻す
+	    }
+
+	    // エラーがない場合のみ登録
+//	    helloService.addUser(userForm);
+	    helloService.addUser(user);
+	    return "addUser";
+
+		
+		
 	}
 }
